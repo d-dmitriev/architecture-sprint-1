@@ -12,7 +12,7 @@ module.exports = {
     mode: "development",
     devServer: {
         static: path.join(__dirname, "dist"),
-        port: 3004,
+        port: 3000,
         historyApiFallback: true
     },
     output: {
@@ -41,7 +41,7 @@ module.exports = {
     },
     plugins: [
         new ModuleFederationPlugin({
-            name: "main-app",
+            name: "host-app",
             remotes: {
                 "auth": "auth@http://localhost:3001/remoteEntry.js",
                 "profile": "profile@http://localhost:3002/remoteEntry.js",

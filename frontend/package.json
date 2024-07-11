@@ -2,6 +2,11 @@
   "name": "web_canonicals_ru",
   "version": "0.1.0",
   "private": true,
+  "workspaces": [
+    "auth-microfrontend",
+    "profile-microfrontend",
+    "places-microfrontend"
+  ],
   "dependencies": {
     "@testing-library/jest-dom": "^5.11.4",
     "@testing-library/react": "^11.1.0",
@@ -12,7 +17,7 @@
     "web-vitals": "^1.0.1"
   },
   "scripts": {
-    "start": "webpack serve",
+    "start": "npm start -w auth & npm start -w profile & npm start -w places & npm start -w host & webpack serve",
     "build": "webpack build",
     "test": "npx jest ./index.spec.js",
     "test:microfrontend": "npx jest ./index.spec.js"
