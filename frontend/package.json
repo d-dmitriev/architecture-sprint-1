@@ -5,7 +5,8 @@
   "workspaces": [
     "auth-microfrontend",
     "profile-microfrontend",
-    "places-microfrontend"
+    "places-microfrontend",
+    "."
   ],
   "dependencies": {
     "@testing-library/jest-dom": "^5.11.4",
@@ -17,8 +18,10 @@
     "web-vitals": "^1.0.1"
   },
   "scripts": {
-    "start": "npm start -w auth & npm start -w profile & npm start -w places & npm start -w host & webpack serve",
-    "build": "webpack build",
+    "start": "npm run start:webpack -w auth & npm run start:webpack -w profile & npm run start:webpack -w places & npm run start:webpack -w web_canonicals_ru",
+    "start:webpack": "webpack serve",
+    "build": "npm run build:webpack --ws",
+    "build:webpack": "webpack --mode production",
     "test": "npx jest ./index.spec.js",
     "test:microfrontend": "npx jest ./index.spec.js"
   },
