@@ -3,26 +3,14 @@ import { Route, useHistory, Switch } from "react-router-dom";
 import Header from "./Header";
 import Main from "./Main";
 import Footer from "./Footer";
-import PopupWithForm from "./PopupWithForm";
-import ImagePopup from "./ImagePopup";
 import api from "../utils/api";
-import { CurrentUserContext } from "../contexts/CurrentUserContext";
-import EditProfilePopup from "./EditProfilePopup";
-import EditAvatarPopup from "./EditAvatarPopup";
-import AddPlacePopup from "./AddPlacePopup";
-import Register from "./Register";
-import Login from "./Login";
+import Register from "auth/Register";
+import Login from "auth/Login";
 import InfoTooltip from "./InfoTooltip";
 import ProtectedRoute from "./ProtectedRoute";
 import * as auth from "../utils/auth.js";
 
 function App() {
-  const [isEditProfilePopupOpen, setIsEditProfilePopupOpen] =
-    React.useState(false);
-  const [isAddPlacePopupOpen, setIsAddPlacePopupOpen] = React.useState(false);
-  const [isEditAvatarPopupOpen, setIsEditAvatarPopupOpen] =
-    React.useState(false);
-  const [selectedCard, setSelectedCard] = React.useState(null);
   const [cards, setCards] = React.useState([]);
 
   // В корневом компоненте App создана стейт-переменная currentUser. Она используется в качестве значения для провайдера контекста.
@@ -66,28 +54,8 @@ function App() {
     }
   }, [history]);
 
-  function handleEditProfileClick() {
-    setIsEditProfilePopupOpen(true);
-  }
-
-  function handleAddPlaceClick() {
-    setIsAddPlacePopupOpen(true);
-  }
-
-  function handleEditAvatarClick() {
-    setIsEditAvatarPopupOpen(true);
-  }
-
   function closeAllPopups() {
-    setIsEditProfilePopupOpen(false);
-    setIsAddPlacePopupOpen(false);
-    setIsEditAvatarPopupOpen(false);
     setIsInfoToolTipOpen(false);
-    setSelectedCard(null);
-  }
-
-  function handleCardClick(card) {
-    setSelectedCard(card);
   }
 
   function handleUpdateUser(userUpdate) {
@@ -178,58 +146,38 @@ function App() {
   }
 
   return (
-    // В компонент App внедрён контекст через CurrentUserContext.Provider
-    <CurrentUserContext.Provider value={currentUser}>
-      <div className="page__content">
-        <Header email={email} onSignOut={onSignOut} />
-        <Switch>
-          {/*Роут / защищён HOC-компонентом ProtectedRoute*/}
-          <ProtectedRoute
-            exact
-            path="/"
-            component={Main}
-            cards={cards}
-            onEditProfile={handleEditProfileClick}
-            onAddPlace={handleAddPlaceClick}
-            onEditAvatar={handleEditAvatarClick}
-            onCardClick={handleCardClick}
-            onCardLike={handleCardLike}
-            onCardDelete={handleCardDelete}
-            loggedIn={isLoggedIn}
-          />
-          {/*Роут /signup и /signin не является защищёнными, т.е оборачивать их в HOC ProtectedRoute не нужно.*/}
-          <Route path="/signup">
-            <Register onRegister={onRegister} />
-          </Route>
-          <Route path="/signin">
-            <Login onLogin={onLogin} />
-          </Route>
-        </Switch>
-        <Footer />
-        <EditProfilePopup
-          isOpen={isEditProfilePopupOpen}
+    <div className="page__content">
+      <Header email={email} onSignOut={onSignOut} />
+      <Switch>
+        {/*Роут / защищён HOC-компонентом ProtectedRoute*/}
+        <ProtectedRoute
+          exact
+          path="/"
+          component={Main}
+          currentUser={currentUser}
+          cards={cards}
           onUpdateUser={handleUpdateUser}
-          onClose={closeAllPopups}
-        />
-        <AddPlacePopup
-          isOpen={isAddPlacePopupOpen}
           onAddPlace={handleAddPlaceSubmit}
-          onClose={closeAllPopups}
-        />
-        <PopupWithForm title="Вы уверены?" name="remove-card" buttonText="Да" />
-        <EditAvatarPopup
-          isOpen={isEditAvatarPopupOpen}
           onUpdateAvatar={handleUpdateAvatar}
-          onClose={closeAllPopups}
+          onCardLike={handleCardLike}
+          onCardDelete={handleCardDelete}
+          loggedIn={isLoggedIn}
         />
-        <ImagePopup card={selectedCard} onClose={closeAllPopups} />
-        <InfoTooltip
-          isOpen={isInfoToolTipOpen}
-          onClose={closeAllPopups}
-          status={tooltipStatus}
-        />
-      </div>
-    </CurrentUserContext.Provider>
+        {/*Роут /signup и /signin не является защищёнными, т.е оборачивать их в HOC ProtectedRoute не нужно.*/}
+        <Route path="/signup">
+          <Register onRegister={onRegister} />
+        </Route>
+        <Route path="/signin">
+          <Login onLogin={onLogin} />
+        </Route>
+      </Switch>
+      <Footer />
+      <InfoTooltip
+        isOpen={isInfoToolTipOpen}
+        onClose={closeAllPopups}
+        status={tooltipStatus}
+      />
+    </div>
   );
 }
 
